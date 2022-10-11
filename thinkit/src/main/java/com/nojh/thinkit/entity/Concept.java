@@ -1,5 +1,8 @@
 package com.nojh.thinkit.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,6 +14,7 @@ public class Concept {
     private int id;
 
     @Column(name = "CONCEPT_CONTENT")
+    @Getter
     private String content;
 
     @ManyToOne
