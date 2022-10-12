@@ -1,13 +1,14 @@
 package com.nojh.thinkit.service;
 
+import com.nojh.thinkit.dto.ConceptDto;
+import com.nojh.thinkit.dto.KeywordDto;
+import com.nojh.thinkit.dto.ProblemDto;
 import com.nojh.thinkit.entity.Concept;
 import com.nojh.thinkit.entity.Keyword;
 import com.nojh.thinkit.repository.ConceptRepository;
 import com.nojh.thinkit.repository.KeywordRepository;
 import com.nojh.thinkit.repository.ProblemRepository;
 import com.nojh.thinkit.repository.SubjectRepository;
-import com.nojh.thinkit.vo.ConceptVO;
-import com.nojh.thinkit.vo.KeywordVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -31,25 +32,25 @@ public class BaseService {
             "array", 1
     );
 
-    public KeywordVO getKeywords(String subject) {
+    public KeywordDto getKeywords(String subject) {
         int id = subjects.get(subject);
         List<Keyword> list = keywordRepository.findBySubjectId(id);
         List<String> keyword_names = new ArrayList<>();
-        KeywordVO keywordVO = new KeywordVO();
 
         for (Keyword keyword : list) {
             keyword_names.add(keyword.getName());
         }
+        KeywordDto keywordDto = new KeywordDto(keyword_names);
         //keywordVO.setSubject_name(subject);
-        keywordVO.setKeywords(keyword_names);
-        return keywordVO;
+        //keywordDto.setKeywords(keyword_names);
+        return keywordDto;
     }
 
-    public ConceptVO getConceptContent(String keyword){
+    public ConceptDto getConceptContent(String keyword) {
         int id = keywords.get(keyword);
         Concept content = conceptRepository.findByKeywordId(id);
-        ConceptVO conceptVO = new ConceptVO();
-        conceptVO.setContent(content.getContent());
-        return conceptVO;
+        ConceptDto conceptDto = new ConceptDto(content.getContent());
+        return conceptDto;
     }
+
 }
