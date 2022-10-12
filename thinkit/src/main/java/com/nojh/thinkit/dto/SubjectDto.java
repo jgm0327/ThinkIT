@@ -14,5 +14,5 @@ import java.util.List;
  */
 
 public record SubjectDto(int id, String name, List<ProblemDto> problems,
-                         @JsonProperty("keywords") List<KeywordDto> keywords) implements Serializable {
+                         List<KeywordDto> keywords) implements Serializable {
 }
