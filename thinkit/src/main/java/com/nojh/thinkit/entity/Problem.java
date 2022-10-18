@@ -1,5 +1,7 @@
 package com.nojh.thinkit.entity;
 
+import lombok.Getter;
+
 import javax.persistence.*;
 
 @Entity
@@ -12,9 +14,11 @@ public class Problem {
     private int id;
 
     @Column(name = "PROBLEM_TITLE")
+    @Getter
     private String title;
 
     @Column(name = "PROBLEM_CONTENT")
+    @Getter
     private String content;
 
     @ManyToOne
