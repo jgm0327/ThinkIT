@@ -1,6 +1,5 @@
 package com.nojh.thinkit.repository;
 
-import com.nojh.thinkit.entity.Concept;
 import com.nojh.thinkit.entity.Keyword;
 import org.springframework.data.jpa.repository.JpaRepository;
 
