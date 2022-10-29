@@ -6,7 +6,9 @@ import com.nojh.thinkit.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -18,56 +20,32 @@ public class BaseService {
     private final FeedbackRepository feedbackRepository;
     private final InterviewProblemRepository interviewProblemRepository;
 
-    private final Map<String, Integer> subjects = Map.of(
-            "dataStructure", 1
-    );
-
-    private final Map<String, Integer> keywords = Map.of(
-            "array", 1
-    );
-
-    public KeywordDto getKeywords(String subject) {
-        int id = subjects.get(subject);
-        List<Keyword> list = keywordRepository.findBySubjectId(id);
+    public KeywordDto getKeywords(String name) {
+        Subject subject = subjectRepository.findByNameEquals(name);
+        List<Keyword> list = keywordRepository.findBySubjectId(subject.getId());
         List<String> keyword_names = new ArrayList<>();
-
-        for (Keyword keyword : list) {
-            keyword_names.add(keyword.getName());
-        }
+        list.forEach(keyword -> keyword_names.add(keyword.getName()));
         KeywordDto keywordDto = new KeywordDto(keyword_names);
         return keywordDto;
     }
 
-    public ConceptDto getConceptContent(String keyword) {
-        int id = keywords.get(keyword);
-        Concept content = conceptRepository.findByKeywordId(id);
+    public ConceptDto getConceptContent(String name) {
+        Keyword keyword = keywordRepository.findByNameEquals(name);
+        Concept content = conceptRepository.findByKeywordId(keyword.getId());
         ConceptDto conceptDto = new ConceptDto(content.getContent());
         return conceptDto;
     }
 
-    public List<Integer> getRandomId(int per_cnt) {
-        Map<Integer, Integer> map = new HashMap<>();
-        int length = problemRepository.findAll().size();
-        Random random = new Random();
-        int cnt = 0;
-        while (per_cnt > cnt) {
-            int randomNum = random.nextInt(length - 1) + 1;
-            if (map.get(randomNum) != null)
-                continue;
-            map.put(randomNum, 1);
-            cnt++;
-        }
-        return map.keySet().stream().toList();
-    }
 
     // TODO: 다형성을 위한 리팩토링을 할 것
     public ProblemDto getProblems(List<String> subjects) {
         List<Integer> ids = new ArrayList<>();
-        int total = subjects.size(), per_cnt = (int) 10 / total;
+        int per_cnt = (int) (10 / subjects.size()) + 1;
         List<String> title_list = new ArrayList<>();
         List<String> content_list = new ArrayList<>();
         subjects.forEach(e -> {
-            ids.add(this.subjects.get(e));
+            Subject subject = subjectRepository.findByNameEquals(e);
+            ids.add(subject.getId());
         });
 
         ids.forEach(id -> {
@@ -75,12 +53,10 @@ public class BaseService {
             Subject sub;
             if (s.isPresent()) {
                 sub = s.get();
-                List<Integer> list = getRandomId(per_cnt);
-                list.forEach(e -> {
-                    Problem problem = problemRepository.findBySubjectAndId(sub, e);
-                    title_list.add(problem.getTitle());
-                    content_list.add(problem.getContent());
-
+                List<Problem> problems = problemRepository.selectByRandom(sub.getId(), per_cnt);
+                problems.forEach(data -> {
+                    title_list.add(data.getTitle());
+                    content_list.add(data.getContent());
                 });
             }
         });
@@ -89,10 +65,11 @@ public class BaseService {
 
     public InterviewProblemDto getInterviewProblems(List<String> subjects) {
         List<Integer> ids = new ArrayList<>();
-        int per_cnt = (int) 10 / subjects.size();
+        int per_cnt = (int) (10 / subjects.size()) + 1;
         List<String> content_list = new ArrayList<>();
         subjects.forEach(e -> {
-            ids.add(this.subjects.get(e));
+            Subject subject = subjectRepository.findByNameEquals(e);
+            ids.add(subject.getId());
         });
 
         ids.forEach(id -> {
@@ -100,10 +77,9 @@ public class BaseService {
             Subject sub;
             if (s.isPresent()) {
                 sub = s.get();
-                List<Integer> list = getRandomId(per_cnt);
-                list.forEach(e -> {
-                    InterviewProblem problem = interviewProblemRepository.findBySubjectAndId(sub, e);
-                    content_list.add(problem.getContent());
+                List<InterviewProblem> problems = interviewProblemRepository.selectByRandom(sub.getId(), per_cnt);
+                problems.forEach(e->{
+                    content_list.add(e.getContent());
                 });
             }
         });
