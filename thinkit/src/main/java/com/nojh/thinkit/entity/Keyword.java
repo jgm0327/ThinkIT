@@ -11,6 +11,7 @@ public class Keyword {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "KEYWORD_ID")
+    @Getter
     private int id;
 
     @Column(name = "KEYWORD_NAME", nullable = false)

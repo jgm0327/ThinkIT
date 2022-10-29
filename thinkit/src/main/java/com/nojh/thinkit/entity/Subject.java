@@ -11,6 +11,7 @@ public class Subject {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "SUBJECT_ID")
+    @Getter
     private int id;
 
     @Column(name = "SUBJECT_NAME", nullable = false)
