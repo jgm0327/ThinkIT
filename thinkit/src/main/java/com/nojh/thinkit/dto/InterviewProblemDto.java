@@ -10,5 +10,5 @@ import java.util.List;
  * A DTO for the {@link Problem} entity
  */
 
-public record InterviewProblemDto(@JsonProperty(value="selects") List<String> content) implements Serializable {
+public record InterviewProblemDto(@JsonProperty(value="problems") List<String> content) implements Serializable {
 }
